@@ -2,5 +2,5 @@
 versions
 notes.md
 scripts/__pycache__
-scripts/key.py
+key.py
 .DS_Store
