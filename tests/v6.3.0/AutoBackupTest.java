@@ -71,7 +71,6 @@ public class AutoBackupTest extends BaseEspressoTest {
     enableAutobackup();
     createTestNote("B Title", "B content", 0);
 
-    // Waiting a little to ensure background service completes auto backup
     Thread.sleep(1200);
 
     List<Note> currentNotes = dbHelper.getAllNotes(false);
@@ -84,63 +83,117 @@ public class AutoBackupTest extends BaseEspressoTest {
       Note backupNote = BackupHelper.getImportNote(backupNoteFile);
       assertEquals(backupNote, currentNote);
     }
+
   }
 
   @Test
   public void everyUpdateToNotesShouldTriggerAutobackup() throws InterruptedException {
+
     enableAutobackup();
 
     createTestNote("C Title", "C content", 0);
+
     assertAutobackupIsCorrect();
 
     // Category addition
     onData(anything()).inAdapterView(ViewMatchers.withId(R.id.list)).atPosition(0).perform(click());
 
     onView(allOf(withId(R.id.menu_category), withContentDescription(R.string.category),
+        childAtPosition(
+            childAtPosition(
+                withId(R.id.toolbar),
+                1),
+            1),
         isDisplayed())).perform(click());
 
     onView(allOf(withId(R.id.buttonNegativeDP), withText(R.string.add_category),
-        isDisplayed())).perform(scrollTo(), click());
+        childAtPosition(
+            childAtPosition(
+                withId(android.R.id.content),
+                0),
+            4),
+        isDisplayed())).perform(click());
 
     onView(allOf(withId(R.id.category_title),
+        childAtPosition(
+            childAtPosition(
+                withId(android.R.id.content),
+                0),
+            0),
         isDisplayed())).perform(replaceText("cat1"), closeSoftKeyboard());
 
     onView(allOf(withId(R.id.save), withText("Ok"), isDisplayed())).perform(click());
 
     navigateUp();
+
     assertAutobackupIsCorrect();
 
     // Reminder addition
+
     onData(anything()).inAdapterView(withId(R.id.list)).atPosition(0).perform(click());
 
     onView(allOf(withId(R.id.reminder_layout),
-        isDisplayed())).perform(scrollTo(), click());
+        childAtPosition(
+            childAtPosition(
+                withClassName(is("android.widget.LinearLayout")),
+                1),
+            2))).perform(scrollTo(), click());
 
     onView(allOf(withId(R.id.buttonPositive), withText("Ok"),
-        isDisplayed())).perform(click());
+        childAtPosition(
+            allOf(withId(R.id.button_layout),
+                childAtPosition(
+                    withId(R.id.llMainContentHolder),
+                    2)),
+            5))).perform(click());
 
     onView(allOf(withId(R.id.done),
+        childAtPosition(
+            childAtPosition(
+                withClassName(is("android.widget.LinearLayout")),
+                2),
+            0),
         isDisplayed())).perform(click());
 
     navigateUp();
+
     assertAutobackupIsCorrect();
 
     onData(anything()).inAdapterView(withId(R.id.list)).atPosition(0).perform(click());
 
     onView(allOf(withId(R.id.menu_attachment),
+        childAtPosition(
+            childAtPosition(
+                withId(R.id.toolbar),
+                1),
+            0),
         isDisplayed())).perform(click());
 
     onView(allOf(withId(R.id.recording), withText(R.string.record),
+        childAtPosition(
+            allOf(withId(R.id.attachment_dialog_root),
+                childAtPosition(
+                    withId(R.id.md_customViewFrame),
+                    0)),
+            3),
         isDisplayed())).perform(click());
 
     Thread.sleep(1000);
 
     onView(allOf(withId(R.id.recording),
+        childAtPosition(
+            allOf(withId(R.id.attachment_dialog_root),
+                childAtPosition(
+                    withId(R.id.md_customViewFrame),
+                    0)),
+            3),
         isDisplayed())).perform(click());
 
     navigateUp();
     navigateUp();
+
     assertAutobackupIsCorrect();
+
   }
 
   private void enableAutobackup() {
@@ -152,25 +205,38 @@ public class AutoBackupTest extends BaseEspressoTest {
     List<LinkedList<DiffMatchPatch.Diff>> autobackupDifferences = BackupHelper
         .integrityCheck(StorageHelper.getOrCreateBackupDir(ConstantsBase.AUTO_BACKUP_DIR));
     assertEquals(0, autobackupDifferences.size());
+
   }
 
   private void autoBackupActivationFromPreferences() {
-    onView(allOf(withId(R.id.toolbar),
+
+    onView(allOf(childAtPosition(allOf(withId(R.id.toolbar),
+        childAtPosition(
+            withClassName(is("android.widget.RelativeLayout")),
+            0)),
+        1),
         isDisplayed())).perform(click());
 
     getSettingsMenuItemView()
         .perform(scrollTo(), click());
 
-    onView(allOf(withId(android.R.id.list),
-        isDisplayed()))
+    onView(allOf(childAtPosition(
+        allOf(withId(android.R.id.list),
+            withParent(withClassName(is("android.widget.FrameLayout")))),
+        1), isDisplayed()))
         .perform(click());
 
-    onView(allOf(withId(android.R.id.list),
-        isDisplayed()))
+    onView(allOf(childAtPosition(
+        allOf(withId(android.R.id.list),
+            withParent(withClassName(is("android.widget.FrameLayout")))),
+        0), isDisplayed()))
         .perform(click());
 
-    onView(allOf(withId(android.R.id.list),
-        isDisplayed())).perform(scrollTo(), click());
+    onView(allOf(childAtPosition(
+        allOf(withId(android.R.id.list),
+            withParent(withClassName(is("android.widget.FrameLayout")))),
+        4),
+        isDisplayed())).perform(click());
 
     onView(allOf(withId(R.id.buttonNegativeDP), isDisplayed())).perform(click());
 
@@ -184,4 +250,5 @@ public class AutoBackupTest extends BaseEspressoTest {
     return existsAtLeastOneCategory ? onView(withId(R.id.drawer_tag_list))
         : onView(withId(R.id.settings_view));
   }
+
 }

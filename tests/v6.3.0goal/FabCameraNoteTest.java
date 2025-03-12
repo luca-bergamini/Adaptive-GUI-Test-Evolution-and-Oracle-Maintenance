@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2013-2023 Federico Iosue (federico@iosue.it)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package it.feio.android.omninotes.ui;
 
 import static androidx.test.espresso.Espresso.onView;
@@ -6,6 +23,7 @@ import static androidx.test.espresso.action.ViewActions.pressBack;
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
@@ -30,6 +48,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import rx.Observable;
 
+
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class FabCameraNoteTest extends BaseEspressoTest {
@@ -50,12 +69,25 @@ public class FabCameraNoteTest extends BaseEspressoTest {
     intending(hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(result);
 
     onView(allOf(withId(R.id.fab_expand_menu_button),
+        childAtPosition(
+            allOf(withId(R.id.fab),
+                childAtPosition(
+                    withClassName(is("android.widget.FrameLayout")),
+                    2)),
+            3),
         isDisplayed())).perform(click());
 
     onView(allOf(withId(R.id.fab_camera),
+        childAtPosition(
+            allOf(withId(R.id.fab),
+                childAtPosition(
+                    withClassName(is("android.widget.FrameLayout")),
+                    2)),
+            0),
         isDisplayed())).perform(click());
 
     pressBack();
+
   }
 
   public void onEvent(NotesUpdatedEvent notesUpdatedEvent) {

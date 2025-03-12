@@ -1,4 +1,22 @@
+/*
+ * Copyright (C) 2013-2023 Federico Iosue (federico@iosue.it)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package it.feio.android.omninotes.ui;
+
 
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
@@ -11,6 +29,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.is;
 
 import android.view.InputDevice;
 import android.view.MotionEvent;
@@ -23,13 +42,14 @@ import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.GeneralLocation;
 import androidx.test.espresso.action.GeneralSwipeAction;
 import androidx.test.espresso.action.Press;
+import androidx.test.espresso.action.Swipe;
 import androidx.test.espresso.action.Tap;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.util.HumanReadables;
 import androidx.test.espresso.util.TreeIterables;
 import androidx.test.rule.ActivityTestRule;
-import it.feio.android.omninotes.BaseAndroidTestCase;
+import it.feio.android.omninotes.testutils.BaseAndroidTestCase;
 import it.feio.android.omninotes.MainActivity;
 import it.feio.android.omninotes.R;
 import it.feio.android.omninotes.utils.ClickWithoutDisplayConstraint;
@@ -39,6 +59,7 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Rule;
+
 
 public class BaseEspressoTest extends BaseAndroidTestCase {
 
@@ -55,6 +76,7 @@ public class BaseEspressoTest extends BaseAndroidTestCase {
         description.appendText("Child at position " + position + " in parent ");
         parentMatcher.describeTo(description);
       }
+
 
       @Override
       public boolean matchesSafely(View view) {
@@ -75,23 +97,30 @@ public class BaseEspressoTest extends BaseAndroidTestCase {
   }
 
   void navigateUp() {
-    onView(allOf(withId(R.id.toolbar),
-        childAtPosition(withClassName(is("android.widget.LinearLayout")), 0)))
-        .perform(click());
+    onView(allOf(childAtPosition(allOf(withId(R.id.toolbar),
+        childAtPosition(withClassName(is("android.widget.RelativeLayout")), 0)
+    ), 0), isDisplayed())).perform(click());
   }
 
   void navigateUPSearch() {
-    onView(withId(R.id.menu_search))
-        .perform(scrollTo(), click());
+    onView(allOf(childAtPosition(allOf(withId(R.id.toolbar),
+        childAtPosition(withClassName(is("android.widget.RelativeLayout")), 0)
+    ), 1), isDisplayed())).perform(click());
   }
 
   void navigateUpSettings() {
     onView(allOf(withContentDescription(R.string.abc_action_bar_up_description),
         childAtPosition(allOf(withId(R.id.toolbar),
-            childAtPosition(withClassName(is("android.widget.LinearLayout")), 0)),
+            childAtPosition(withClassName(is("android.widget.RelativeLayout")), 0)),
             1), isDisplayed())).perform(click());
   }
 
+  /**
+   * Perform action of waiting for a specific view id.
+   *
+   * @param viewId The id of the view to wait for.
+   * @param millis The timeout of until when to wait for.
+   */
   public static ViewAction waitId(final int viewId, final long millis) {
     return new ViewAction() {
       @Override
@@ -119,7 +148,8 @@ public class BaseEspressoTest extends BaseAndroidTestCase {
           }
 
           uiController.loopMainThreadForAtLeast(50);
-        } while (System.currentTimeMillis() < endTime);
+        }
+        while (System.currentTimeMillis() < endTime);
 
         throw new PerformException.Builder()
             .withActionDescription(this.getDescription())
@@ -162,7 +192,7 @@ public class BaseEspressoTest extends BaseAndroidTestCase {
         childAtPosition(
             allOf(withId(R.id.toolbar),
                 childAtPosition(
-                    withClassName(is("android.widget.LinearLayout")),
+                    withClassName(is("android.widget.RelativeLayout")),
                     0)),
             1),
         isDisplayed())).perform(click());
@@ -177,4 +207,5 @@ public class BaseEspressoTest extends BaseAndroidTestCase {
                 1)))
         .atPosition(menuPosition).perform(scrollTo(), click());
   }
+
 }

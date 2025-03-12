@@ -1,4 +1,22 @@
+/*
+ * Copyright (C) 2013-2023 Federico Iosue (federico@iosue.it)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package it.feio.android.omninotes.ui;
+
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -18,12 +36,14 @@ import org.hamcrest.core.IsInstanceOf;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class FabLifecycleTest extends BaseEspressoTest {
 
   @Test
   public void fabOpenCloseTest() {
+
     onView(Matchers.allOf(ViewMatchers.withId(R.id.fab_expand_menu_button),
         withParent(withId(R.id.fab)))).perform(click());
 
@@ -40,13 +60,23 @@ public class FabLifecycleTest extends BaseEspressoTest {
 
     ViewInteraction checklistFabAction = onView(
         allOf(withId(R.id.fab_checklist),
-            withParent(withId(R.id.fab)),
+            childAtPosition(
+                allOf(withId(R.id.fab),
+                    childAtPosition(
+                        IsInstanceOf.instanceOf(android.widget.FrameLayout.class),
+                        4)),
+                3),
             isDisplayed()));
     assertNotNull(checklistFabAction);
 
     ViewInteraction cameraFabAction = onView(
         allOf(withId(R.id.fab_camera),
-            withParent(withId(R.id.fab)),
+            childAtPosition(
+                allOf(withId(R.id.fab),
+                    childAtPosition(
+                        IsInstanceOf.instanceOf(android.widget.FrameLayout.class),
+                        4)),
+                1),
             isDisplayed()));
     assertNotNull(cameraFabAction);
   }
