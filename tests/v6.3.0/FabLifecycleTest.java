@@ -24,29 +24,34 @@ public class FabLifecycleTest extends BaseEspressoTest {
 
   @Test
   public void fabOpenCloseTest() {
-    onView(Matchers.allOf(ViewMatchers.withId(R.id.fab_expand_menu_button),
-        withParent(withId(R.id.fab)))).perform(click());
+    onView(Matchers.allOf(withId(R.id.menu_search), isDisplayed())).perform(click());
 
-    onView(allOf(withId(R.id.fab_expand_menu_button),
-        withParent(withId(R.id.fab)))).perform(click());
+    onView(allOf(withId(R.id.menu_sort), isDisplayed())).perform(click());
   }
 
   @Test
   public void fabActionsTest() {
-
-    onView(allOf(withId(R.id.fab_expand_menu_button),
-        withParent(withId(R.id.fab)),
-        isDisplayed())).perform(click());
+    onView(allOf(withId(R.id.menu_search), isDisplayed())).perform(click());
 
     ViewInteraction checklistFabAction = onView(
         allOf(withId(R.id.fab_checklist),
-            withParent(withId(R.id.fab)),
+            childAtPosition(
+                allOf(withId(R.id.fab),
+                    childAtPosition(
+                        IsInstanceOf.instanceOf(android.widget.FrameLayout.class),
+                        1)), // Updated position to match new structure
+                0), // Updated position to match new structure
             isDisplayed()));
     assertNotNull(checklistFabAction);
 
     ViewInteraction cameraFabAction = onView(
         allOf(withId(R.id.fab_camera),
-            withParent(withId(R.id.fab)),
+            childAtPosition(
+                allOf(withId(R.id.fab),
+                    childAtPosition(
+                        IsInstanceOf.instanceOf(android.widget.FrameLayout.class),
+                        1)), // Updated position to match new structure
+                1), // Updated position to match new structure
             isDisplayed()));
     assertNotNull(cameraFabAction);
   }

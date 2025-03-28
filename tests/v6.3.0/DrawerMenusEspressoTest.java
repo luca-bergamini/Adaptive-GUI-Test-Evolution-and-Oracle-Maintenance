@@ -21,7 +21,7 @@ public class DrawerMenusEspressoTest extends BaseEspressoTest {
   public void mainMenuLoaded() {
     openDrawer();
 
-    onView(allOf(withId(R.id.toolbar), withText(R.string.title_item_list))) // Updated ID based on changes
+    onView(allOf(withId(R.id.title), withText("Note")))
         .check(matches(isDisplayed()));
   }
 
@@ -32,7 +32,7 @@ public class DrawerMenusEspressoTest extends BaseEspressoTest {
 
     openDrawer();
 
-    onView(allOf(withId(R.id.toolbar), withText(categoryName))) // Updated ID based on changes
+    onView(allOf(withId(R.id.title), withText(categoryName)))
         .check(matches(isDisplayed()));
   }
 }

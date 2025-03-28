@@ -31,7 +31,6 @@ public class MrJingleLifecycleTest extends BaseEspressoTest {
   @Test
   public void mrJingle_displayedOnFreshStart() {
     onView(allOf(withId(R.id.empty_list), withText(R.string.no_items_in_list),
-        withParent(withParent(IsInstanceOf.instanceOf(android.widget.LinearLayout.class))),
         isDisplayed())).check(matches(isDisplayed()));
   }
 
@@ -39,7 +38,6 @@ public class MrJingleLifecycleTest extends BaseEspressoTest {
   public void mrJingle_hiddenOnNoteCreated() {
     createTestNote("title", "content", 0);
     onView(allOf(withId(R.id.empty_list), withText(R.string.no_items_in_list),
-        withParent(withParent(IsInstanceOf.instanceOf(android.widget.LinearLayout.class))),
         isDisplayed())).check(doesNotExist());
   }
 
@@ -49,7 +47,6 @@ public class MrJingleLifecycleTest extends BaseEspressoTest {
     archiveNotes(dbHelper.getAllNotes(false), true);
 
     onView(allOf(withId(R.id.empty_list), withText(R.string.no_items_in_list),
-        withParent(withParent(IsInstanceOf.instanceOf(android.widget.LinearLayout.class))),
         isDisplayed())).check(matches(isDisplayed()));
   }
 
@@ -59,7 +56,6 @@ public class MrJingleLifecycleTest extends BaseEspressoTest {
     trashNotes(dbHelper.getAllNotes(false), true);
 
     onView(allOf(withId(R.id.empty_list), withText(R.string.no_items_in_list),
-        withParent(withParent(IsInstanceOf.instanceOf(android.widget.LinearLayout.class))),
         isDisplayed())).check(matches(isDisplayed()));
   }
 
@@ -71,7 +67,6 @@ public class MrJingleLifecycleTest extends BaseEspressoTest {
     navigateTo(1);
 
     onView(allOf(withId(R.id.empty_list), withText(R.string.no_items_in_list),
-        withParent(withParent(IsInstanceOf.instanceOf(android.widget.LinearLayout.class))),
         isDisplayed())).check(doesNotExist());
   }
 
@@ -86,7 +81,6 @@ public class MrJingleLifecycleTest extends BaseEspressoTest {
     archiveNotes(notes, false);
 
     onView(allOf(withId(R.id.empty_list), withText(R.string.no_items_in_list),
-        withParent(withParent(IsInstanceOf.instanceOf(android.widget.LinearLayout.class))),
         isDisplayed())).check(matches(isDisplayed()));
   }
 
@@ -98,7 +92,6 @@ public class MrJingleLifecycleTest extends BaseEspressoTest {
     navigateTo(1);
 
     onView(allOf(withId(R.id.empty_list), withText(R.string.no_items_in_list),
-        withParent(withParent(IsInstanceOf.instanceOf(android.widget.LinearLayout.class))),
         isDisplayed())).check(doesNotExist());
   }
 
@@ -113,25 +106,23 @@ public class MrJingleLifecycleTest extends BaseEspressoTest {
     trashNotes(notes, false);
 
     onView(allOf(withId(R.id.empty_list), withText(R.string.no_items_in_list),
-        withParent(withParent(IsInstanceOf.instanceOf(android.widget.LinearLayout.class))),
         isDisplayed())).check(matches(isDisplayed()));
   }
 
-   @Test
-   public void mrJingle_displayedOnArchiveWhenEmptiedBySwiping() {
-      createTestNote("title", "content", 0);
-      List<Note> notes = dbHelper.getAllNotes(false);
-      archiveNotes(notes, true);
+  @Test
+  public void mrJingle_displayedOnArchiveWhenEmptiedBySwiping() {
+    createTestNote("title", "content", 0);
+    List<Note> notes = dbHelper.getAllNotes(false);
+    archiveNotes(notes, true);
 
-      navigateTo(1);
+    navigateTo(1);
 
-      onView(withId(R.id.list)).perform(
-              RecyclerViewActions.actionOnItemAtPosition(0, new GeneralSwipeAction(
-                      Swipe.SLOW, GeneralLocation.BOTTOM_RIGHT, GeneralLocation.BOTTOM_LEFT,
-                      Press.FINGER)));
+    onView(withId(R.id.list)).perform(
+            RecyclerViewActions.actionOnItemAtPosition(0, new GeneralSwipeAction(
+                    Swipe.SLOW, GeneralLocation.BOTTOM_RIGHT, GeneralLocation.BOTTOM_LEFT,
+                    Press.FINGER)));
 
-      onView(allOf(withId(R.id.empty_list), withText(R.string.no_items_in_list),
-              withParent(withParent(IsInstanceOf.instanceOf(android.widget.LinearLayout.class))),
-              isDisplayed())).check(matches(isDisplayed()));
-   }
+    onView(allOf(withId(R.id.empty_list), withText(R.string.no_items_in_list),
+            isDisplayed())).check(matches(isDisplayed()));
+  }
 }

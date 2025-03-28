@@ -71,6 +71,7 @@ public class AutoBackupTest extends BaseEspressoTest {
     enableAutobackup();
     createTestNote("B Title", "B content", 0);
 
+    // Waiting a little to ensure background service completes auto backup
     Thread.sleep(1200);
 
     List<Note> currentNotes = dbHelper.getAllNotes(false);
@@ -83,16 +84,13 @@ public class AutoBackupTest extends BaseEspressoTest {
       Note backupNote = BackupHelper.getImportNote(backupNoteFile);
       assertEquals(backupNote, currentNote);
     }
-
   }
 
   @Test
   public void everyUpdateToNotesShouldTriggerAutobackup() throws InterruptedException {
-
     enableAutobackup();
 
     createTestNote("C Title", "C content", 0);
-
     assertAutobackupIsCorrect();
 
     // Category addition
@@ -123,13 +121,11 @@ public class AutoBackupTest extends BaseEspressoTest {
         isDisplayed())).perform(replaceText("cat1"), closeSoftKeyboard());
 
     onView(allOf(withId(R.id.save), withText("Ok"), isDisplayed())).perform(click());
-
     navigateUp();
 
     assertAutobackupIsCorrect();
 
     // Reminder addition
-
     onData(anything()).inAdapterView(withId(R.id.list)).atPosition(0).perform(click());
 
     onView(allOf(withId(R.id.reminder_layout),
@@ -156,11 +152,10 @@ public class AutoBackupTest extends BaseEspressoTest {
         isDisplayed())).perform(click());
 
     navigateUp();
-
     assertAutobackupIsCorrect();
 
+    // Attachments
     onData(anything()).inAdapterView(withId(R.id.list)).atPosition(0).perform(click());
-
     onView(allOf(withId(R.id.menu_attachment),
         childAtPosition(
             childAtPosition(
@@ -191,9 +186,7 @@ public class AutoBackupTest extends BaseEspressoTest {
 
     navigateUp();
     navigateUp();
-
     assertAutobackupIsCorrect();
-
   }
 
   private void enableAutobackup() {
@@ -205,11 +198,9 @@ public class AutoBackupTest extends BaseEspressoTest {
     List<LinkedList<DiffMatchPatch.Diff>> autobackupDifferences = BackupHelper
         .integrityCheck(StorageHelper.getOrCreateBackupDir(ConstantsBase.AUTO_BACKUP_DIR));
     assertEquals(0, autobackupDifferences.size());
-
   }
 
   private void autoBackupActivationFromPreferences() {
-
     onView(allOf(childAtPosition(allOf(withId(R.id.toolbar),
         childAtPosition(
             withClassName(is("android.widget.RelativeLayout")),

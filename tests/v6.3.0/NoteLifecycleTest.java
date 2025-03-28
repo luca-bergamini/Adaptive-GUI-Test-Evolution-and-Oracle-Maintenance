@@ -30,7 +30,7 @@ public class NoteLifecycleTest extends BaseEspressoTest {
     String content = "Note content";
 
     ViewInteraction viewInteraction = onView(
-        Matchers.allOf(ViewMatchers.withId(R.id.fab_expand_menu_button),
+        Matchers.allOf(ViewMatchers.withId(R.id.menu_search), // updated from fab_expand_menu_button
             withParent(withId(R.id.fab)),
             isDisplayed()));
 
@@ -43,9 +43,10 @@ public class NoteLifecycleTest extends BaseEspressoTest {
         withParent(withId(R.id.fab)),
         isDisplayed())).perform(click());
 
-    onView(allOf(withId(R.id.menu_search),
-        withParent(withId(R.id.action_bar_root)),
-        isDisplayed())).perform(click()); // Updated ID for search button 
+    onView(allOf(withId(R.id.detail_title),
+        withParent(allOf(withId(R.id.title_wrapper),
+            withParent(withId(R.id.detail_tile_card)))),
+        isDisplayed())).perform(click());
 
     onView(allOf(withId(R.id.detail_title),
         withParent(allOf(withId(R.id.title_wrapper),
@@ -57,5 +58,4 @@ public class NoteLifecycleTest extends BaseEspressoTest {
 
     navigateUp();
   }
-
 }

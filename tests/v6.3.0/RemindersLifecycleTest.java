@@ -24,21 +24,19 @@ import org.junit.runner.RunWith;
 @LargeTest
 public class RemindersLifecycleTest extends BaseEspressoTest {
 
-  @Test
-  public void remindersLifecycle() {
-    onView(Matchers.allOf(ViewMatchers.withId(R.id.fab_expand_menu_button),
-        withParent(withId(R.id.fab)),
-        isDisplayed())).perform(click());
+    @Test
+    public void remindersLifecycle() {
+        onView(Matchers.allOf(ViewMatchers.withId(R.id.fab),
+                isDisplayed())).perform(click());
 
-    onView(allOf(withId(R.id.fab_note),
-        withParent(withId(R.id.fab)),
-        isDisplayed())).perform(click());
+        onView(allOf(withId(R.id.menu_note),
+                isDisplayed())).perform(click());
 
-    onView(withId(R.id.reminder_layout)).perform(scrollTo(), click());
+        onView(withId(R.id.reminder_layout)).perform(scrollTo(), click());
 
-    onView(allOf(withId(R.id.buttonPositive), withText("Ok"), isDisplayed())).perform(click());
+        onView(allOf(withId(R.id.buttonPositive), withText("Ok"), isDisplayed())).perform(click());
 
-    onView(withId(R.id.datetime)).check(matches(withText(
-        startsWith(OmniNotes.getAppContext().getResources().getString(R.string.alarm_set_on)))));
-  }
+        onView(withId(R.id.datetime)).check(matches(withText(
+                startsWith(OmniNotes.getAppContext().getResources().getString(R.string.alarm_set_on)))));
+    }
 }

@@ -3,7 +3,7 @@ package it.feio.android.omninotes.ui;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -21,8 +21,12 @@ public class SearchTagBackArrowTest extends BaseEspressoTest {
 
     selectNoteInList(0);
     onView(withId(R.id.detail_content)).perform(click());
-    onView(withContentDescription("Open")).perform(click());
+    onView(withText("Open")).perform(click());
+    
+    // Adjusting for the new menu_search and menu_sort buttons
     onView(withId(R.id.menu_search)).perform(click());
+    navigateUPSearch();
     onView(withId(R.id.menu_sort)).perform(click());
+    navigateUPSearch();
   }
 }

@@ -11,6 +11,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.is;
 
 import android.view.InputDevice;
 import android.view.MotionEvent;
@@ -23,6 +24,7 @@ import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.GeneralLocation;
 import androidx.test.espresso.action.GeneralSwipeAction;
 import androidx.test.espresso.action.Press;
+import androidx.test.espresso.action.Swipe;
 import androidx.test.espresso.action.Tap;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
@@ -39,6 +41,7 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Rule;
+import org.junit.Test;
 
 public class BaseEspressoTest extends BaseAndroidTestCase {
 
@@ -75,21 +78,39 @@ public class BaseEspressoTest extends BaseAndroidTestCase {
   }
 
   void navigateUp() {
-    onView(allOf(withId(R.id.toolbar),
-        childAtPosition(withClassName(is("android.widget.LinearLayout")), 0)))
-        .perform(click());
+    onView(allOf(childAtPosition(allOf(withId(R.id.toolbar),
+        childAtPosition(withClassName(is("android.widget.RelativeLayout")), 0)
+    ), 0), isDisplayed())).perform(click());
   }
 
   void navigateUPSearch() {
-    onView(withId(R.id.menu_search))
-        .perform(scrollTo(), click());
+    onView(allOf(childAtPosition(allOf(withId(R.id.toolbar),
+        childAtPosition(withClassName(is("android.widget.RelativeLayout")), 0)
+    ), 1), isDisplayed())).perform(click());
   }
 
   void navigateUpSettings() {
     onView(allOf(withContentDescription(R.string.abc_action_bar_up_description),
         childAtPosition(allOf(withId(R.id.toolbar),
-            childAtPosition(withClassName(is("android.widget.LinearLayout")), 0)),
+            childAtPosition(withClassName(is("android.widget.RelativeLayout")), 0)),
             1), isDisplayed())).perform(click());
+  }
+
+  @Test
+  public void testUpdatedFunctionality() {
+    // Check if the FrameLayout with a11y-important is displayed
+    onView(withId(R.id.menu_search))
+        .check(matches(isDisplayed()))
+        .check(matches(withContentDescription("Cerca"))); // Check for new content description
+
+    onView(withId(R.id.menu_sort))
+        .check(matches(isDisplayed()))
+        .check(matches(withContentDescription("Ordinamento"))); // Check for new content description
+
+    // Assuming the Toolbar still exists and no structural changes occurred here
+    navigateUp();
+
+    // Additional tests...
   }
 
   public static ViewAction waitId(final int viewId, final long millis) {
@@ -119,7 +140,8 @@ public class BaseEspressoTest extends BaseAndroidTestCase {
           }
 
           uiController.loopMainThreadForAtLeast(50);
-        } while (System.currentTimeMillis() < endTime);
+        }
+        while (System.currentTimeMillis() < endTime);
 
         throw new PerformException.Builder()
             .withActionDescription(this.getDescription())
@@ -162,7 +184,7 @@ public class BaseEspressoTest extends BaseAndroidTestCase {
         childAtPosition(
             allOf(withId(R.id.toolbar),
                 childAtPosition(
-                    withClassName(is("android.widget.LinearLayout")),
+                    withClassName(is("android.widget.RelativeLayout")),
                     0)),
             1),
         isDisplayed())).perform(click());

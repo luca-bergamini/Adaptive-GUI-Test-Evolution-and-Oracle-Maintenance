@@ -44,11 +44,21 @@ public class RecurrenceRuleTest extends BaseEspressoTest {
     Thread.sleep(1500);
 
     onView(allOf(withId(R.id.menu_sort), withContentDescription("Ordinamento"),
+        childAtPosition(
+            childAtPosition(
+                withId(R.id.toolbar),
+                2),
+            1),
         isDisplayed())).perform(click());
 
     Thread.sleep(1500);
 
     onView(allOf(withId(R.id.title), withText("Creation date"),
+        childAtPosition(
+            childAtPosition(
+                withId(R.id.content),
+                0),
+            0),
         isDisplayed())).perform(click());
 
     selectNoteInList(0);
